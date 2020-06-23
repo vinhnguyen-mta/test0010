@@ -1,0 +1,76 @@
+﻿@using WebsiteBanHang.Models;
+@model IteamGioHang
+@{
+    ViewBag.Title = "SuaGioHang";
+    Layout = "~/Views/Layout/ProductLayout.cshtml";
+}
+
+@{
+    
+    List<IteamGioHang> lstGioHang = ViewBag.GioHang as List<IteamGioHang>;
+}
+<div class="col-md-9 product-price1">
+    <table class="table">
+        <tr>
+            <td>Mã Sản Phẩm</td>
+            <td>Tên Sản Phẩm</td>
+            <td>Hình Ảnh</td>
+            <td>Số Lượng</td>
+            <td>Đơn Giá</td>
+            <td>Thành Tiền</td>
+
+        </tr>
+        @foreach (var i in lstGioHang)
+        {
+            // sản phẩm có có mã sản phẩm được chỉnh sửa 
+            if(Model.MaSP== i.MaSP)
+                {
+                    using (Html.BeginForm("CapNhapGioHang", "GioHang"))
+                    {
+                          <tr>
+                <td>@i.MaSP@Html.Hidden("MaSP",i.MaSP)</td>
+                <td>@i.TenSP</td>
+                <td><img src="@Url.Content("~/Content/HinhAnhSP/"+i.HinhAnh)" width="50" height="50" /></td>
+                              <td>
+                                  @Html.TextBox("SoLuong", i.SoLuong, new { @class = "SoLuongThayDoi" })
+                              <p style="color:red" id="TB_SoLuongThayDoi"></p>
+                          </td>
+                <td>@i.DonGia.ToString("#,##") VNĐ</td>
+                              
+                <td>@i.ThanhTien.ToString("#,##") VNĐ</td>
+                <td><input type="submit" value="Cập Nhập" id="btncapnhap" />
+                    @Html.ActionLink("Xóa", "XoaGioHang", new { @MaSP = i.MaSP })</td>
+
+            </tr> 
+                    }
+          
+           
+        }
+        else
+            {
+                <tr>
+                <td>@i.MaSP</td>
+                <td>@i.TenSP</td>
+                <td><img src="@Url.Content("~/Content/HinhAnhSP/"+i.HinhAnh)" width="50" height="50" /></td>
+                <td>@i.SoLuong</td>
+                <td>@i.DonGia.ToString("#,##") VNĐ</td>
+                <td>@i.ThanhTien.ToString("#,##") VNĐ</td>
+                <td>@Html.ActionLink("Sửa","SuaGioHang", new { @MaSP= i.MaSP})</td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+@*Kiểm tra số lượng thay đổi*@
+<script>
+
+    $("#btncapnhap").click(function () {
+        //kiểm tra số lượng không phải là số hoặc nhỏ hơn 0
+        var soluong = $(".SoLuongThayDoi").val();
+        if(isNaN(soluong)== true || soluong<0) // có nghĩa nó là chữ hoặc số nhỏ hơn 0 
+        {
+            $("#TB_SoLuongThayDoi").text("Số Lượng bị hư cấu!");
+            return false;
+        }
+    });
+</script>

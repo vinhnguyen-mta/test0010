@@ -1,0 +1,143 @@
+﻿@using WebsiteBanHang.Models;
+@*tạo 1 cái view model*@
+@model List<IteamGioHang> 
+@{
+
+    ViewBag.Title = "XemGioHang";
+    Layout = "~/Views/Layout/ProductLayout.cshtml";
+}
+
+@if (Model == null || Model.Count <=0 )
+{
+    <h1 style="color:red">Giỏ Hàng rỗng </h1>
+}
+else
+{
+     <div class="col-md-9 product-price1">
+    <table class="table">
+        <tr>
+            <td>Mã Sản Phẩm</td>
+            <td>Tên Sản Phẩm</td>
+            <td>Hình Ảnh</td>
+            <td>Số Lượng</td>
+            <td>Đơn Giá</td>
+            <td>Thành Tiền</td>
+        
+        </tr>
+        @foreach(var i in Model)
+        {
+            <tr>
+                <td>@i.MaSP</td>
+                <td>@i.TenSP</td>
+                <td><img src="@Url.Content("~/Content/HinhAnhSP/"+i.HinhAnh)" width="50" height="50" /></td>
+                <td>@i.SoLuong</td>
+                <td>@i.DonGia.ToString("#,##") VNĐ</td>
+                <td>@i.ThanhTien.ToString("#,##") VNĐ</td>
+                <td>@Html.ActionLink("Sửa","SuaGioHang", new { @MaSP= i.MaSP})
+                @Html.ActionLink("Xóa", "XoaGioHang", new { @MaSP = i.MaSP })</td>
+            </tr>
+        }
+    </table>
+         </div>
+  
+        @*Thiết KẾ form lưu thông tin khách hàng đối với khách hàng là khách vãng lai (Khách chưa có tài khoản)*@
+        using(Html.BeginForm("DatHang","GioHang"))
+        {
+            if(Session["TaiKhoan"]==null)
+            { 
+         <div class="ThongTinMuaHang col-md-9 product-price1">
+             <table align="center" class="table">
+                 <tr>
+                     <td align="center" colspan="2"><b>Thông tin khách hàng</b></td>
+
+                 </tr>
+                 <tr>
+                     <td>Họ tên</td>
+                     <td>
+                         @Html.TextBox("TenKH")
+                         <p style="color:red;" id="TB_TenKH"></p>
+                     </td>
+
+                 </tr>
+                 <tr>
+                     <td>
+                         Địa chỉ
+                     </td>
+                     <td>
+                         @Html.TextArea("DiaChi")
+                         <p style="color:red;" id="TB_DiaChi"></p>
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>Email</td>
+                     <td>
+                         @Html.TextBox("Email")
+                         <p style="color:red;" id="TB_Email"></p>
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>Điện thoại</td>
+                     <td>@Html.TextBox("SoDienThoai")</td>
+                     <p style="color:red;" id="TB_sdt"></p>
+                 </tr>
+                 <tr></tr>
+             </table>
+
+         </div>
+   
+    
+    
+         @*Kiểm validation thông qua jquery*@
+
+            <script>
+                $("#btnDatHang").click(function () {
+                    var loi = 0;
+                    if ($("#TenKH").val() == "") {
+                        $("#TB_TenKH").text("Tên khách hàng không được bỏ trống");
+                        loi++;
+                    }
+                    else {
+                        $("#TB_TenKH").text("");
+                    }
+
+                    if ($("#DiaChi").val() == "") {
+                        $("#TB_DiaChi").text("Địa chỉ không được bỏ trống");
+                        loi++;
+                    }
+                    else {
+                        $("#TB_DiaChi").text("");
+                    }
+                    if ($("#SoDienThoai").val() == "") {
+                        $("#TB_sdt").text("Số Điện Thoại không được bỏ trống");
+                        loi++;
+                    }
+                    else {
+                        $("#TB_sdt").text("");
+                    }
+                    var loi;
+                    dinhdang = /^[0-9A-Za-z]+[0-9A-Za-z_]*@@[\w\d.]+\.\w{2,4}$/;
+                    KTemail = dinhdang.test($('#Email').val());
+                    if (!KTemail) {
+                        $('#TB_Email').text("Email không hợp lệ !");
+                        loi++;
+                    }
+                    if (loi != 0) {
+                        //Ngăn sự kiện submit đến server
+                        return false;
+                    }
+
+                });
+
+
+            </script>
+            }
+            <div class="divDatHang" style="text-align:right">
+        <input type="submit" id="btnDatHang" value="Đặt Hàng"  />
+        @Html.ActionLink("Mua Tiếp", "Index", "Home", new { @class = "btn btn-success" })
+    </div>
+        }
+     
+
+}
+
+
